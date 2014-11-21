@@ -1,9 +1,16 @@
 ﻿<Window x:Class="XMLCommander.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525" WindowStyle="None" ResizeMode="NoResize">
+        Title="MainWindow" Height="350" Width="525" WindowStyle="None" ResizeMode="NoResize" MinWidth="500" SizeChanged="Window_SizeChanged" MinHeight="300">
     <Grid>
-        <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="525" MouseLeftButtonDown="WindowDrag" FontSize="14" FontFamily="Raavi">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition/>
+            <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="Button_MaxMin" Content="O" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="24" Height="24" Panel.ZIndex="5" RenderTransformOrigin="-1.417,0.542" Margin="0,0,24,0" Click="Button_MaxMin_Click"/>
+        <Button Content="X" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="24" Height="24" Click="Button_Click" Panel.ZIndex="5"/>
+        <Menu Grid.Row="0" Height="24" VerticalAlignment="Center" MouseLeftButtonDown="WindowDrag" FontSize="14" FontFamily="Raavi" FlowDirection="LeftToRight" Margin="0" HorizontalAlignment="Left">
             <Menu.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                     <GradientStop Color="#FF873C3C"/>
@@ -14,12 +21,55 @@
                 <MenuItem x:Name="MenuItem_Open" Header="Öffnen..." Click="MenuItem_Open_Click" Height="24" Padding="2,2,2,0"/>
                 <MenuItem x:Name="MenuItem_Save" Header="Speichern..." Click="MenuItem_Save_Click" Height="24" Padding="2,2,2,0"/>
                 <MenuItem x:Name="MenuItem_SaveAs" Header="Speichern unter..." Click="MenuItem_SaveAs_Click" Height="24" Padding="2,2,2,0"/>
-                <Separator Height="12" Margin="0"></Separator>
+                <Separator Height="12" Margin="0"/>
                 <MenuItem x:Name="MenuItem_Close" Header="Schliessen" Click="MenuItem_Close_Click" Height="24" Padding="2,2,2,0"/>
-                <Separator Height="12" Margin="0"></Separator>
+                <Separator Height="12" Margin="0"/>
                 <MenuItem x:Name="MenuItem_Exit" Header="Beenden" Click="MenuItem_Exit_Click" Height="24" Padding="2,2,2,0"/>
             </MenuItem>
         </Menu>
-        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="24" Stroke="Black" VerticalAlignment="Top" MouseDown="WindowDrag" Margin="50,0,0,0" Opacity="0" Width="475"/>
+        <Rectangle Grid.Row="0" Height="24" Stroke="Black" VerticalAlignment="Center" Margin="45,0,0,0" StrokeThickness="0" MouseDown="WindowDrag">
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FF873C3C" Offset="0"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle HorizontalAlignment="Right" Height="24" Margin="0" Grid.Row="2" Stroke="Black" StrokeThickness="0" VerticalAlignment="Top" Width="24" MouseDown="WindowResize" Panel.ZIndex="1" Cursor="SizeNWSE">
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FF873C3C" Offset="0"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <StatusBar Margin="0" Grid.Row="2"/>
+        <Grid Margin="0" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <ListView x:Name="ListView2" Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0,1,0,0">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <ListView x:Name="ListView1" Grid.Column="1" Margin="0" BorderThickness="1,0,0,1">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn x:Name="Column_Key" Header="Key" Width="100" DisplayMemberBinding="{Binding Key}"/>
+                        <GridViewColumn x:Name="Column_Value" Header="Value" DisplayMemberBinding="{Binding Value}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <TreeView Margin="0" BorderThickness="0,0,1,1">
+            </TreeView>
+        </Grid>
     </Grid>
 </Window>
