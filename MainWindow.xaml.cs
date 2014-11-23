@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using System.Xml;
 
 namespace XMLCommander
 {
@@ -46,36 +47,121 @@ namespace XMLCommander
         }
         #endregion
 
-        public class kkk
+        private XmlDocument Document;
+        private XmlElement RootNode;
+        private List<MyDataGridItem> MyDataGridElementList;
+
+        private class MyDataGridItem
         {
-            public string Key { get; set; }
-            public string Value { get; set; }
-            public override string ToString()
+            public XmlElement _XmlElement { get; set; }
+            public MyDataGridItem ParentMyDataGridItem { get; set; }
+            public List<MyDataGridItem> ChildMyDataGridItems { get; set; }
+            public bool IsExpanded { get; set; }
+            public int Level { get; set; }
+            public string IsEditable { get; set; }
+
+            public string Name
+            { 
+                get 
+                {
+                    string rval = string.Empty;
+                    for (int i = 0; i < this.Level; i++)
+                    {
+                        rval += "-";
+                    }
+                    return rval + this._XmlElement.Name; 
+                } 
+            }
+
+            public string Value
             {
-                return this.Key + ", " + this.Value + " years old";
+                get 
+                {
+                    XmlText textnode;
+                    if (!this._XmlElement.HasChildNodes) return string.Empty;
+                    else if ((textnode = this._XmlElement.ChildNodes[0] as XmlText) == null) return string.Empty;
+                    else
+                        return textnode.Value;
+                }
+                set
+                {
+                    XmlText textnode;
+                    if (!this._XmlElement.HasChildNodes) { }
+                    else if ((textnode = this._XmlElement.ChildNodes[0] as XmlText) == null) { }
+                    else
+                        textnode.Value = value;
+                }
+            }
+
+            public MyDataGridItem(XmlElement e, MyDataGridItem p, bool ie, int l)
+            {
+                _XmlElement = e;
+                ParentMyDataGridItem = p;
+                IsExpanded = ie;
+                Level = l;
+                ChildMyDataGridItems = new List<MyDataGridItem>();
+                IsEditable = (this._XmlElement.HasChildNodes && (this._XmlElement.ChildNodes[0].GetType() == typeof(XmlText))) ? "1" : "0";
             }
         }
 
-        public List<kkk> liste = new List<kkk>();
         public MainWindow()
         {
             InitializeComponent();
-            for (int i = 0; i < 13; i++)
-			{
-                //ListViewItem lvi = new ListViewItem();
-                //lvi.Content = i.ToString();
-                kkk lll = new kkk();
-                lll.Key = "aaa";
-                lll.Value = "bbb";
-                liste.Add(lll);
-                //ListView1.Items.Add(lll);
-			}
-            ListView1.ItemsSource = liste;
+            Document = new XmlDocument();
+            MyDataGridElementList = new List<MyDataGridItem>();
+
+            //Style style = new Style();
+            //style.TargetType = typeof(DataGridCell);
+            //DataTrigger DT = new DataTrigger();  
+            //Binding DataTriggerBinding = new Binding("IsEditable"); 
+            //DataTriggerBinding.Mode = BindingMode.Default;
+
+            //DataTriggerBinding.Converter = new ArtistNameConverter();
+            ////DataTriggerBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            //DT.Binding = DataTriggerBinding;
+            //DT.Value = "True";
+            //Setter DataTriggerSetter = new Setter();
+            //DataTriggerSetter.Property = DataGridCell.BackgroundProperty;
+            //DataTriggerSetter.Value = Brushes.Red;
+            //DT.Setters.Add(DataTriggerSetter);
+            //style.Triggers.Add(DT);
+
+            //col1.CellStyle = style;  
+
+        }
+
+        private void Load()
+        {
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                if (IO.FileToXMLDocument(ref doc))
+                {
+                    Document = doc.Clone() as XmlDocument;
+                    RootNode = Document.DocumentElement;
+
+                    MyDataGridElementList.Clear();
+                    MyDataGridElementList.Add(new MyDataGridItem(RootNode, null, false, 0));
+                    DataGrid1.ItemsSource = MyDataGridElementList;
+                    //TreeViewItem tvi = new TreeViewItem();
+                    //tvi.Header = RootNode.Name;
+                    //tvi.Tag = new TreeViewItemTagObject(RootNode, true);
+                    //if (AddPossibleChildsToTreeViewItem(RootNode, ref tvi))
+                    //{
+                    //    TreeView1.Items.Clear();
+                    //    TreeView1.Items.Add(tvi);
+                    //}
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void MenuItem_Open_Click(object sender, RoutedEventArgs e)
         {
-
+            Load();
         }
 
         private void MenuItem_Save_Click(object sender, RoutedEventArgs e)
@@ -118,19 +204,127 @@ namespace XMLCommander
             }
         }
 
-        private void MaximizeColumnValue()
-        {
-            double Height_ListView = ListView1.ActualHeight - 24;
-            double Height_Items = ListView1.Items.Count * 20.88;
-            if (Height_Items < Height_ListView)
-                Column_Value.Width = ListView1.ActualWidth - Column_Key.ActualWidth - 9;
-            else
-                Column_Value.Width = ListView1.ActualWidth - Column_Key.ActualWidth - 26;
-        }
+        //private void MaximizeColumnValue()
+        //{
+        //    double Height_ListView = ListView1.ActualHeight - 24;
+        //    double Height_Items = ListView1.Items.Count * 20.88;
+        //    if (Height_Items < Height_ListView)
+        //        Column_Value.Width = ListView1.ActualWidth - Column_Key.ActualWidth - 9;
+        //    else
+        //        Column_Value.Width = ListView1.ActualWidth - Column_Key.ActualWidth - 26;
+        //}
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            MaximizeColumnValue();
+            //MaximizeColumnValue();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            Load();
+        }
+
+        private void DataGrid1_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                MyDataGridItem CurrentMyDataGridItem = DataGrid1.SelectedItem as MyDataGridItem;
+                int CurrentIndex = MyDataGridElementList.IndexOf(CurrentMyDataGridItem);
+                if (CurrentMyDataGridItem == null) return;
+                if (CurrentMyDataGridItem.IsExpanded) 
+                    CollapseDataGridElement(CurrentMyDataGridItem);
+                else
+                    ExpandDataGridElement(CurrentMyDataGridItem, ref CurrentIndex);
+                CurrentMyDataGridItem.IsExpanded = !CurrentMyDataGridItem.IsExpanded;
+                DataGrid1.ItemsSource = null;
+                DataGrid1.ItemsSource = MyDataGridElementList;
+                //GenerateDataGridElementList(DataGrid1.SelectedIndex);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void ExpandDataGridElement(MyDataGridItem mdgi, ref int CurrentIndex)
+        {
+            if (mdgi._XmlElement.ChildNodes == null) return;
+            if (mdgi.ChildMyDataGridItems.Count != 0)
+            {
+                AddChildMyDataGridItems(mdgi, ref CurrentIndex);
+            }
+            else
+            {
+                for (int i = 0; i < mdgi._XmlElement.ChildNodes.Count; i++)
+                {
+                    if (mdgi._XmlElement.ChildNodes[i].HasChildNodes)// && HasXmlNodeChildNodesWithElements(mdgi._XmlElement.ChildNodes[i]))
+                    {
+                        MyDataGridItem cn = new MyDataGridItem(mdgi._XmlElement.ChildNodes[i] as XmlElement, mdgi, false, mdgi.Level + 1);
+                        CurrentIndex++;
+                        MyDataGridElementList.Insert(CurrentIndex, cn);
+                        mdgi.ChildMyDataGridItems.Add(cn);
+                    }
+                }
+            }
+        }
+
+        private void AddChildMyDataGridItems(MyDataGridItem mdgi, ref int CurrentIndex)
+        {
+            for (int i = 0; i < mdgi.ChildMyDataGridItems.Count; i++)
+            {
+                CurrentIndex++;
+                MyDataGridElementList.Insert(CurrentIndex, mdgi.ChildMyDataGridItems[i]);
+                if (!mdgi.ChildMyDataGridItems[i].IsExpanded) continue;
+                if (mdgi.ChildMyDataGridItems[i].ChildMyDataGridItems != null)
+                {
+                    AddChildMyDataGridItems(mdgi.ChildMyDataGridItems[i], ref CurrentIndex);
+                }
+            }
+        }
+
+        private void CollapseDataGridElement(MyDataGridItem mdgi)
+        {
+            int index = MyDataGridElementList.IndexOf(mdgi);
+            bool weiter = true;
+            while (weiter && (index + 1 < MyDataGridElementList.Count))
+            {
+                if (MyDataGridElementList[index + 1].Level > mdgi.Level)
+                    MyDataGridElementList.RemoveAt(index + 1);
+                else
+                    weiter = false;
+            }
+        }
+
+        private void DataGrid1_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            int i = 0;
+        }
+
+        private void DataGrid1_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            if (!MyDataGridElementList[e.Row.GetIndex()]._XmlElement.HasChildNodes) { e.Cancel = true; }
+            else if (MyDataGridElementList[e.Row.GetIndex()]._XmlElement.ChildNodes[0].GetType() != typeof(XmlText)) { e.Cancel = true; }
+        }
+    }
+    public class ArtistNameConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType,
+            object parameter, System.Globalization.CultureInfo culture)
+        {
+            try
+            {
+                return (value.ToString() == "1");
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType,
+            object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
