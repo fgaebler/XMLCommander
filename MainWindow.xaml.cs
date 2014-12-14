@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Xml;
+using System.Drawing;
+using System.IO;
 
 namespace XMLCommander
 {
@@ -109,25 +111,6 @@ namespace XMLCommander
             InitializeComponent();
             Document = new XmlDocument();
             MyDataGridElementList = new List<MyDataGridItem>();
-
-            //Style style = new Style();
-            //style.TargetType = typeof(DataGridCell);
-            //DataTrigger DT = new DataTrigger();  
-            //Binding DataTriggerBinding = new Binding("IsEditable"); 
-            //DataTriggerBinding.Mode = BindingMode.Default;
-
-            //DataTriggerBinding.Converter = new ArtistNameConverter();
-            ////DataTriggerBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            //DT.Binding = DataTriggerBinding;
-            //DT.Value = "True";
-            //Setter DataTriggerSetter = new Setter();
-            //DataTriggerSetter.Property = DataGridCell.BackgroundProperty;
-            //DataTriggerSetter.Value = Brushes.Red;
-            //DT.Setters.Add(DataTriggerSetter);
-            //style.Triggers.Add(DT);
-
-            //col1.CellStyle = style;  
-
         }
 
         private void Load()
@@ -195,11 +178,13 @@ namespace XMLCommander
             if (this.WindowState != System.Windows.WindowState.Maximized)
             {
                 this.WindowState = System.Windows.WindowState.Maximized;
+                b.Style = FindResource("MyNormalSizeButtonStyle") as Style;
                 b.Content = "o";
             }
             else
             {
                 this.WindowState = System.Windows.WindowState.Normal;
+                b.Style = FindResource("MyMaximizeButtonStyle") as Style;
                 b.Content = "O";
             }
         }
@@ -229,8 +214,11 @@ namespace XMLCommander
             try
             {
                 MyDataGridItem CurrentMyDataGridItem = DataGrid1.SelectedItem as MyDataGridItem;
-                int CurrentIndex = MyDataGridElementList.IndexOf(CurrentMyDataGridItem);
                 if (CurrentMyDataGridItem == null) return;
+                Border test = e.OriginalSource as Border;
+                DataGridCell test2 = test.TemplatedParent as DataGridCell;
+                if (test2.Column.DisplayIndex != 0) return;
+                int CurrentIndex = MyDataGridElementList.IndexOf(CurrentMyDataGridItem);
                 if (CurrentMyDataGridItem.IsExpanded) 
                     CollapseDataGridElement(CurrentMyDataGridItem);
                 else
@@ -238,7 +226,6 @@ namespace XMLCommander
                 CurrentMyDataGridItem.IsExpanded = !CurrentMyDataGridItem.IsExpanded;
                 DataGrid1.ItemsSource = null;
                 DataGrid1.ItemsSource = MyDataGridElementList;
-                //GenerateDataGridElementList(DataGrid1.SelectedIndex);
             }
             catch (Exception ex)
             {
@@ -305,7 +292,13 @@ namespace XMLCommander
             if (!MyDataGridElementList[e.Row.GetIndex()]._XmlElement.HasChildNodes) { e.Cancel = true; }
             else if (MyDataGridElementList[e.Row.GetIndex()]._XmlElement.ChildNodes[0].GetType() != typeof(XmlText)) { e.Cancel = true; }
         }
+
+        private void Button_Min_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = System.Windows.WindowState.Minimized;
+        }
     }
+    
     public class ArtistNameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType,

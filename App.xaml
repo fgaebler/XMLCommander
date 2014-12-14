@@ -3,18 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <LinearGradientBrush x:Key="GrayBlueGradientBrush" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FF873C3C" Offset="0" />
-            <GradientStop Color="White" Offset="1" />
-        </LinearGradientBrush>
-
-        <Style x:Key="newBorder" TargetType="{x:Type Border}">
-            <Setter Property="BorderThickness" Value="2" />
-            <Setter Property="BorderBrush" Value="Black" />
-        </Style>
-        
-        <Style x:Key="SystemButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource GrayBlueGradientBrush}" />
-        </Style>
+        <ResourceDictionary Source="Templates/GrayBlueUI.xaml" />
     </Application.Resources>
 </Application>

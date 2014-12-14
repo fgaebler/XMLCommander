@@ -1,67 +1,51 @@
-﻿<Window x:Class="XMLCommander.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
+        x:Class="XMLCommander.MainWindow"
         Title="MainWindow" Height="350" Width="525" WindowStyle="None" ResizeMode="NoResize" MinWidth="500" SizeChanged="Window_SizeChanged" MinHeight="300" UseLayoutRounding="True">
-    <Grid>
+    <Grid Background="{DynamicResource DialogMainBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
+            <RowDefinition Height="20"/>
             <RowDefinition/>
             <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
-        <Button x:Name="Button_MaxMin" Content="O" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="24" Height="24" Panel.ZIndex="5" Margin="0,0,24,0" Click="Button_MaxMin_Click" Style="{DynamicResource SystemButtonStyle}" BorderThickness="0"/>
-        <Button x:Name="Button_Close"  Content="X" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="24" Height="24" Panel.ZIndex="5" Click="Button_Click" Style="{DynamicResource SystemButtonStyle}" Padding="0"/>
-        <Menu Grid.Row="0" Height="24" VerticalAlignment="Center" MouseLeftButtonDown="WindowDrag" FontSize="14" FontFamily="Raavi" FlowDirection="LeftToRight" Margin="0" HorizontalAlignment="Left">
-            <Menu.Background>
-                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                    <GradientStop Color="#FF873C3C"/>
-                    <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Menu.Background>
-            <MenuItem Header="Datei">
-                <MenuItem x:Name="MenuItem_Open" Header="Öffnen..." Click="MenuItem_Open_Click" Height="24" Padding="2,2,2,0"/>
-                <MenuItem x:Name="MenuItem_Save" Header="Speichern..." Click="MenuItem_Save_Click" Height="24" Padding="2,2,2,0"/>
-                <MenuItem x:Name="MenuItem_SaveAs" Header="Speichern unter..." Click="MenuItem_SaveAs_Click" Height="24" Padding="2,2,2,0"/>
-                <Separator Height="12" Margin="0"/>
-                <MenuItem x:Name="MenuItem_Close" Header="Schliessen" Click="MenuItem_Close_Click" Height="24" Padding="2,2,2,0"/>
-                <Separator Height="12" Margin="0"/>
-                <MenuItem x:Name="MenuItem_Exit" Header="Beenden" Click="MenuItem_Exit_Click" Height="24" Padding="2,2,2,0"/>
+        <Rectangle Grid.Row="0" Height="24" MouseDown="WindowDrag" Fill="{DynamicResource DialogMainBrush}" Margin="0,0,72,0"/>
+        <Button x:Name="Button_Min" Grid.Row="0" HorizontalAlignment="Right" Panel.ZIndex="5" Margin="0,0,48,0" Click="Button_Min_Click" Style="{DynamicResource MyMinimizeButtonStyle}"/>
+        <Button x:Name="Button_Max" Grid.Row="0" HorizontalAlignment="Right" Panel.ZIndex="5" Margin="0,0,24,0" Click="Button_MaxMin_Click" Style="{DynamicResource MyMaximizeButtonStyle}"/>
+        <Button x:Name="Button_Close" Grid.Row="0" HorizontalAlignment="Right" Panel.ZIndex="5" Click="Button_Click" Style="{DynamicResource MyCloseButtonStyle}"/>
+        <Menu Grid.Row="1" Height="20" VerticalAlignment="Center" FlowDirection="LeftToRight" Margin="0" HorizontalAlignment="Left">
+            <MenuItem Header="DATEI" Padding="7,2,8,3" Style="{DynamicResource MyMenuMainItemStyle}">
+                <MenuItem x:Name="MenuItem_Open" Header="Öffnen..." Click="MenuItem_Open_Click" Style="{DynamicResource MyMenuItemStyle}"/>
+                <MenuItem x:Name="MenuItem_Save" Header="Speichern..." Click="MenuItem_Save_Click" Style="{DynamicResource MyMenuItemStyle}"/>
+                <MenuItem x:Name="MenuItem_SaveAs" Header="Speichern unter..." Click="MenuItem_SaveAs_Click" Style="{DynamicResource MyMenuItemStyle}"/>
+                <Separator Style="{DynamicResource MyMenuSeparatorStyle}"/>
+                <MenuItem x:Name="MenuItem_Close" Header="Schliessen" Click="MenuItem_Close_Click" Style="{DynamicResource MyMenuItemStyle}"/>
+                <Separator Style="{DynamicResource MyMenuSeparatorStyle}"/>
+                <MenuItem x:Name="MenuItem_Exit" Header="Beenden" Click="MenuItem_Exit_Click" Style="{DynamicResource MyMenuItemStyle}"/>
             </MenuItem>
         </Menu>
-        <Rectangle Grid.Row="0" Height="24" Stroke="Black" VerticalAlignment="Center" Margin="45,0,0,0" StrokeThickness="0" MouseDown="WindowDrag">
-            <Rectangle.Fill>
-                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                    <GradientStop Color="#FF873C3C" Offset="0"/>
-                    <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Rectangle.Fill>
-        </Rectangle>
-        <Rectangle HorizontalAlignment="Right" Height="24" Margin="0" Grid.Row="2" Stroke="Black" StrokeThickness="0" VerticalAlignment="Top" Width="24" MouseDown="WindowResize" Panel.ZIndex="1" Cursor="SizeNWSE">
-            <Rectangle.Fill>
-                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                    <GradientStop Color="#FF873C3C" Offset="0"/>
-                    <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Rectangle.Fill>
-        </Rectangle>
-        <StatusBar Margin="0" Grid.Row="2"/>
-        <Grid Margin="0" Grid.Row="1">
+        <Rectangle HorizontalAlignment="Right" Height="24" Margin="0" Grid.Row="3" Stroke="Black" StrokeThickness="0" VerticalAlignment="Top" Width="24" MouseDown="WindowResize" Panel.ZIndex="1" Cursor="SizeNWSE" Fill="{DynamicResource ButtonPressedBrush}"/>
+        <StatusBar Grid.Row="3" Background="{DynamicResource ButtonPressedBrush}"/>
+        <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="24"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <ToolBar Grid.Row="0" >
-                <Button Content="Laden" Click="Button_Click_1"/>
+            <ToolBar Grid.Row="0" Background="{DynamicResource DialogMainBrush}" >
+                <Button Content="Laden" Click="Button_Click_1" Style="{DynamicResource MyButtonStyle}"/>
             </ToolBar>
-            <DataGrid x:Name="DataGrid1" Grid.Row="1" AutoGenerateColumns="False" PreparingCellForEdit="DataGrid1_PreparingCellForEdit" BeginningEdit="DataGrid1_BeginningEdit">
+            <DataGrid x:Name="DataGrid1" Grid.Row="1" AutoGenerateColumns="False" PreparingCellForEdit="DataGrid1_PreparingCellForEdit" BeginningEdit="DataGrid1_BeginningEdit" GridLinesVisibility="None">
                 <DataGrid.Resources>
-                    <Style TargetType="DataGridRow">
+                    <Style TargetType="{x:Type DataGridRow}">
                         <EventSetter Event="MouseDoubleClick" Handler="DataGrid1_MouseDoubleClick"/>
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Knoten/Schlüssel" Width="2*" Binding="{Binding Name}" IsReadOnly="True" CanUserSort="False"/>
-                    <DataGridTextColumn x:Name="col1" Header="Wert" Width="*" Binding="{Binding Value}" CanUserSort="False"/>
+                    <DataGridTextColumn x:Name="Column_Key" Header="Knoten/Schlüssel" Width="2*" Binding="{Binding Name}" IsReadOnly="True" CanUserSort="False" CellStyle="{DynamicResource KeyCellStyle}"/>
+                    <DataGridTextColumn x:Name="Column_Value" Header="Wert" Width="*" Binding="{Binding Value}" CanUserSort="False" CellStyle="{DynamicResource ValueCellStyle}"/>
                 </DataGrid.Columns>
             </DataGrid>
             <ListView x:Name="ListView2" Grid.Row="2" Grid.ColumnSpan="2" BorderThickness="0,1,0,0">

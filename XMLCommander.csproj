@@ -34,8 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -66,6 +68,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Templates\GrayBlueUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -95,7 +101,30 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Templates\" />
+    <Resource Include="Templates\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\close_mouseover.png" />
+    <Resource Include="Templates\close_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\maximize.png" />
+    <Resource Include="Templates\maximize_mouseover.png" />
+    <Resource Include="Templates\maximize_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\NormalSize.png" />
+    <Resource Include="Templates\NormalSize_mouseover.png" />
+    <Resource Include="Templates\NormalSize_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\minimize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\minimize_mouseover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\minimize_pressed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
