@@ -14,9 +14,9 @@
         <Rectangle Grid.Row="0" Height="24" MouseDown="WindowDrag" Fill="{DynamicResource DialogMainBrush}" Margin="0,0,72,0"/>
         <Button x:Name="Button_Min" Grid.Row="0" HorizontalAlignment="Right" Panel.ZIndex="5" Margin="0,0,48,0" Click="Button_Min_Click" Style="{DynamicResource MyMinimizeButtonStyle}"/>
         <Button x:Name="Button_Max" Grid.Row="0" HorizontalAlignment="Right" Panel.ZIndex="5" Margin="0,0,24,0" Click="Button_MaxMin_Click" Style="{DynamicResource MyMaximizeButtonStyle}"/>
-        <Button x:Name="Button_Close" Grid.Row="0" HorizontalAlignment="Right" Panel.ZIndex="5" Click="Button_Click" Style="{DynamicResource MyCloseButtonStyle}"/>
+        <Button x:Name="Button_Close" Grid.Row="0" HorizontalAlignment="Right" Panel.ZIndex="5" Click="Button_Close_Click" Style="{DynamicResource MyCloseButtonStyle}"/>
         <Menu Grid.Row="1" Height="20" VerticalAlignment="Center" FlowDirection="LeftToRight" Margin="0" HorizontalAlignment="Left">
-            <MenuItem Header="DATEI" Padding="7,2,8,3" Style="{DynamicResource MyMenuMainItemStyle}">
+            <MenuItem Header="Datei" Padding="7,2,8,3" Style="{DynamicResource MyMenuMainItemStyle}">
                 <MenuItem x:Name="MenuItem_Open" Header="Öffnen..." Click="MenuItem_Open_Click" Style="{DynamicResource MyMenuItemStyle}"/>
                 <MenuItem x:Name="MenuItem_Save" Header="Speichern..." Click="MenuItem_Save_Click" Style="{DynamicResource MyMenuItemStyle}"/>
                 <MenuItem x:Name="MenuItem_SaveAs" Header="Speichern unter..." Click="MenuItem_SaveAs_Click" Style="{DynamicResource MyMenuItemStyle}"/>
@@ -28,7 +28,7 @@
         </Menu>
         <Rectangle HorizontalAlignment="Right" Height="24" Margin="0" Grid.Row="3" Stroke="Black" StrokeThickness="0" VerticalAlignment="Top" Width="24" MouseDown="WindowResize" Panel.ZIndex="1" Cursor="SizeNWSE" Fill="{DynamicResource ButtonPressedBrush}"/>
         <StatusBar Grid.Row="3" Background="{DynamicResource ButtonPressedBrush}"/>
-        <Grid Grid.Row="2">
+        <Grid Name="Grid1" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="24"/>
                 <RowDefinition Height="2*"/>
@@ -37,18 +37,19 @@
             <ToolBar Grid.Row="0" Background="{DynamicResource DialogMainBrush}" >
                 <Button Content="Laden" Click="Button_Click_1" Style="{DynamicResource MyButtonStyle}"/>
             </ToolBar>
-            <DataGrid x:Name="DataGrid1" Grid.Row="1" AutoGenerateColumns="False" PreparingCellForEdit="DataGrid1_PreparingCellForEdit" BeginningEdit="DataGrid1_BeginningEdit" GridLinesVisibility="None">
+            <!--<Canvas Grid.Row="1" x:Name="canvas"/>-->
+            <!--<DataGrid x:Name="DataGrid1" Grid.Row="1" AutoGenerateColumns="False" RowHeaderWidth="0" PreparingCellForEdit="DataGrid1_PreparingCellForEdit" BeginningEdit="DataGrid1_BeginningEdit" GridLinesVisibility="None" Background="{DynamicResource DialogMainBrush}" CanUserResizeRows="False" RowHeight="16">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridRow}">
                         <EventSetter Event="MouseDoubleClick" Handler="DataGrid1_MouseDoubleClick"/>
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn x:Name="Column_Key" Header="Knoten/Schlüssel" Width="2*" Binding="{Binding Name}" IsReadOnly="True" CanUserSort="False" CellStyle="{DynamicResource KeyCellStyle}"/>
+                    <DataGridTemplateColumn x:Name="Column_Key" Header="Knoten/Schlüssel" Width="1*" IsReadOnly="True" CanUserSort="False" CellStyle="{DynamicResource KeyCellStyle}"></DataGridTemplateColumn>
                     <DataGridTextColumn x:Name="Column_Value" Header="Wert" Width="*" Binding="{Binding Value}" CanUserSort="False" CellStyle="{DynamicResource ValueCellStyle}"/>
                 </DataGrid.Columns>
-            </DataGrid>
-            <ListView x:Name="ListView2" Grid.Row="2" Grid.ColumnSpan="2" BorderThickness="0,1,0,0">
+            </DataGrid>-->
+            <ListView x:Name="ListView2" Grid.Row="2" BorderThickness="0,0,0,0">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn/>

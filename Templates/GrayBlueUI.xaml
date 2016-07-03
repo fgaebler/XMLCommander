@@ -1,7 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
+                    xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
+                    x:Class="XMLCommander.StyleEvents">
 
+    <SolidColorBrush x:Key="Transparent" />
     <SolidColorBrush x:Key="TestBrush" Color="#FFFF00F3" />
     <SolidColorBrush x:Key="DialogMainBrush" Color="#FF2D2D30" />
     <SolidColorBrush x:Key="DialogMouseOverBrush" Color="#FF3F3F46" />
@@ -26,6 +28,19 @@
     <ImageBrush x:Key="MinimizeMouseOverImageBrush" ImageSource="./minimize_mouseover.png"/>
     <ImageBrush x:Key="MinimizePressedImageBrush" ImageSource="./minimize_pressed.png"/>
 
+    <ImageBrush x:Key="ExpandNodeImageBrush" ImageSource="./ExpandNode.png"/>
+    <ImageBrush x:Key="ExpandNodeMouseOverImageBrush" ImageSource="./ExpandNode_mouseover.png"/>
+    <ImageBrush x:Key="ExpandNodePressedImageBrush" ImageSource="./ExpandNode_pressed.png"/>
+
+    <ImageBrush x:Key="CollapsNodeImageBrush" ImageSource="./CollapsNode.png"/>
+    <ImageBrush x:Key="CollapsNodeMouseOverImageBrush" ImageSource="./CollapsNode_mouseover.png"/>
+    <ImageBrush x:Key="CollapsNodePressedImageBrush" ImageSource="./CollapsNode_pressed.png"/>
+
+    <ImageBrush x:Key="EditableNodeImageBrush" ImageSource="./EditableNode.png"/>
+
+    <ImageBrush x:Key="PathImageBrush" ImageSource="./Path.png"/>
+    <ImageBrush x:Key="PathToChildImageBrush" ImageSource="./PathToChild.png"/>
+    <ImageBrush x:Key="PathToLastChildImageBrush" ImageSource="./PathToLastChild.png"/>
 
     <LinearGradientBrush x:Key="GrayBlueGradientBrush" StartPoint="0,0" EndPoint="1,0">
         <GradientStop Color="#FF2D2D30" Offset="0" />
@@ -156,7 +171,7 @@
     <SolidColorBrush x:Key="GlyphBrush" Color="#444" />
 
     <SolidColorBrush x:Key="LightColorBrush" Color="#DDD" />
-    
+
     <Style x:Key="newBorder" TargetType="{x:Type Border}">
         <Setter Property="BorderThickness" Value="2" />
         <Setter Property="BorderBrush" Value="Black" />
@@ -241,6 +256,115 @@
                             <Setter Property="Fill" TargetName="rect" Value="{DynamicResource MinimizePressedImageBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TransparentButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="MinHeight" Value="16"/>
+        <Setter Property="MinWidth" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Rectangle x:Name="rect" Fill="{DynamicResource Transparent}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="MyPathButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="MinHeight" Value="16"/>
+        <Setter Property="MinWidth" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Rectangle x:Name="rect" Fill="{DynamicResource PathImageBrush}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="MyPathToChildButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="MinHeight" Value="16"/>
+        <Setter Property="MinWidth" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Rectangle x:Name="rect" Fill="{DynamicResource PathToChildImageBrush}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="MyPathToLastChildButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="MinHeight" Value="16"/>
+        <Setter Property="MinWidth" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Rectangle x:Name="rect" Fill="{DynamicResource PathToLastChildImageBrush}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="MyExpandNodeButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="MinHeight" Value="16"/>
+        <Setter Property="MinWidth" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Rectangle x:Name="rect" Fill="{DynamicResource ExpandNodeImageBrush}"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" TargetName="rect" Value="{DynamicResource ExpandNodeMouseOverImageBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Fill" TargetName="rect" Value="{DynamicResource ExpandNodePressedImageBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <!--<EventSetter Event="Click" Handler="NodeButton_Click"/>-->
+    </Style>
+
+    <Style x:Key="MyCollapsNodeButtonStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="MinHeight" Value="16"/>
+        <Setter Property="MinWidth" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Rectangle x:Name="rect" Fill="{DynamicResource CollapsNodeImageBrush}"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" TargetName="rect" Value="{DynamicResource CollapsNodeMouseOverImageBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Fill" TargetName="rect" Value="{DynamicResource CollapsNodePressedImageBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <!--<EventSetter Event="Click" Handler="NodeButton_Click"/>-->
+    </Style>
+
+    <Style x:Key="MyEditableNodeButtonStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="MinHeight" Value="16"/>
+        <Setter Property="MinWidth" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Rectangle x:Name="rect" Fill="{DynamicResource EditableNodeImageBrush}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -475,21 +599,36 @@
         </Setter>
     </Style>
 
+    <Style x:Key="MyHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Foreground"  Value="{DynamicResource ButtonPressedBrush}"/>
+        <Setter Property="Background"  Value="{DynamicResource DialogMainBrush}"/>
+        <Setter Property="FontWeight"  Value="Bold"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                    <Border x:Name="Border" BorderThickness="0,1,0,1" BorderBrush="{DynamicResource ButtonPressedBrush}" Background="{DynamicResource DialogMainBrush}">
+                        <ContentPresenter Margin="6,2,2,4" HorizontalAlignment="Left" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ValueCellStyle" TargetType="DataGridCell">
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="Foreground"  Value="{DynamicResource ButtonPressedBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type DataGridCell}">
-                    <!--<Rectangle x:Name="rect" Fill="{DynamicResource DialogMainBrush}"/>-->
                     <Border x:Name="Border" BorderThickness="0" Background="{DynamicResource DialogMainBrush}">
-                        <ContentPresenter Margin="2" HorizontalAlignment="Left"  VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" RecognizesAccessKey="True"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" TargetName="Border" Value="{DynamicResource DialogMouseOverBrush}"/>
                         </Trigger>
-                        <DataTrigger Binding="{Binding IsEditable}" Value="1">
+                        <DataTrigger Binding="{Binding IsEditable}" Value="True">
                             <Setter Property="Background" TargetName="Border" Value="{DynamicResource GrayBlueGradientBrush}"></Setter>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
@@ -498,13 +637,96 @@
         </Setter>
     </Style>
 
-    <Style x:Key="KeyCellStyle" TargetType="DataGridCell">
+    <Style x:Key="KeyCellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="Foreground"  Value="{DynamicResource ButtonPressedBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type DataGridCell}">
-                    <!--<Rectangle x:Name="rect" Fill="{DynamicResource DialogMainBrush}"/>-->
+                    <Grid x:Name="Grid" Background="{DynamicResource Transparent}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width1}"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width2}"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width3}"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width4}"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width5}"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width6}"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width7}"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width8}"></ColumnDefinition>
+                            <ColumnDefinition Width="{Binding Width9}"></ColumnDefinition>
+                            <ColumnDefinition Width="16"></ColumnDefinition>
+                            <ColumnDefinition Width="16"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="b1" Grid.Column="1" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b2" Grid.Column="2" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b3" Grid.Column="3" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b4" Grid.Column="4" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b5" Grid.Column="5" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b6" Grid.Column="6" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b7" Grid.Column="7" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b8" Grid.Column="8" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b9" Grid.Column="9" Margin="0,1,0,1" Style="{DynamicResource MyPathButtonStyle}"></Button>
+                        <Button x:Name="b11" Grid.Column="10" Margin="0,1,0,1" Style="{DynamicResource MyPathToChildButtonStyle}"></Button>
+                        <Button x:Name="b12" Grid.Column="11" Margin="0,1,0,1" Style="{DynamicResource MyExpandNodeButtonStyle}" Click="NodeButton_Click" ></Button>
+                        <TextBlock Grid.Column="12" Text="{Binding Name}" Margin="2,0,0,0"></TextBlock>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" TargetName="Grid" Value="{DynamicResource DialogMouseOverBrush}"/>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding b1Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b1" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding b2Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b2" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding b3Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b3" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding b4Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b4" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding b5Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b5" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding b6Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b6" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding b7Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b7" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding b8Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b8" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding b9Transparent}" Value="True">
+                            <Setter Property="Style" TargetName="b9" Value="{DynamicResource TransparentButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsLastChild}" Value="True">
+                            <Setter Property="Style" TargetName="b11" Value="{DynamicResource MyPathToLastChildButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                            <Setter Property="Style" TargetName="b12" Value="{DynamicResource MyCollapsNodeButtonStyle}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsEditable}" Value="True">
+                            <Setter Property="Style" TargetName="b12" Value="{DynamicResource MyEditableNodeButtonStyle}"></Setter>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--<Style x:Key="KeyCellStyle" TargetType="DataGridCell">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Foreground"  Value="{DynamicResource ButtonPressedBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                    -->
+    <!--<Rectangle x:Name="rect" Fill="{DynamicResource DialogMainBrush}"/>-->
+    <!--
                     <Border x:Name="Border" BorderThickness="0" Background="{DynamicResource DialogMainBrush}">
                         <ContentPresenter Margin="2" HorizontalAlignment="Left"  VerticalAlignment="Center" RecognizesAccessKey="True"/>
                     </Border>
@@ -516,6 +738,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
 </ResourceDictionary>

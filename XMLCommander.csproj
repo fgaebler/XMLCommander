@@ -126,6 +126,36 @@
   <ItemGroup>
     <Resource Include="Templates\minimize_pressed.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\ExpandNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\ExpandNode_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\ExpandNode_mouseover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\CollapsNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\CollapsNode_mouseover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\CollapsNode_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\EditableNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\PathToChild.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\PathToLastChild.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Templates\Path.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
