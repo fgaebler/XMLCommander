@@ -25,7 +25,7 @@ namespace XMLCommander
    	        {
                 OpenFileDialog dlg = new OpenFileDialog();
                 dlg.DefaultExt = ".xml";
-                dlg.Filter = "XML documents (.xml)|*.xml";
+                dlg.Filter = "XML Documents (*.xml)|*.xml|All Documents (*.*)|*.*";
                 Nullable<bool> result = dlg.ShowDialog();
                 if (result == false) return false;
                 string filename = dlg.FileName;

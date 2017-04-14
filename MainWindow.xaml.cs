@@ -58,9 +58,11 @@ namespace XMLCommander
 
         internal class MyDataGridItem
         {
-            public XmlElement _XmlElement { get; set; }
+            public XmlNode _XmlNode { get; set; }
             public MyDataGridItem ParentMyDataGridItem { get; set; }
             public List<MyDataGridItem> ChildMyDataGridItems { get; set; }
+            public bool HasChildNodes { get; set; }
+            public bool IsExpandable { get; set; }
             public bool IsExpanded { get; set; }
             public int Level { get; set; }
             public bool IsEditable { get; set; }
@@ -88,50 +90,88 @@ namespace XMLCommander
             {
                 get
                 {
-                    if (this._XmlElement.ParentNode == null) return true;
-                    return this._XmlElement.Equals(this._XmlElement.ParentNode.LastChild);
+                    if (this._XmlNode.NodeType == XmlNodeType.Attribute && (!this._XmlNode.Equals(this.ParentMyDataGridItem._XmlNode.Attributes[this.ParentMyDataGridItem._XmlNode.Attributes.Count - 1]) || (this.ParentMyDataGridItem._XmlNode.HasChildNodes && this.ParentMyDataGridItem._XmlNode.FirstChild.NodeType != XmlNodeType.Text))) return false;
+                    return (this._XmlNode.NextSibling == null);
+                    //if (this._XmlNode != null && this._XmlNode.ParentNode == null || this._XmlNode.NextSibling == null) return true;
+                    //return this._XmlNode.Equals(this._XmlNode.ParentNode.LastChild);
                 }
             }
             public string Name
             { 
                 get 
                 {
-                    string rval = string.Empty;
-                    //for (int i = 0; i < this.Level; i++)
-                    //{
-                    //    rval += "-";
-                    //}
-                    return rval + this._XmlElement.Name; 
-                } 
+                    if (this._XmlNode.NodeType == XmlNodeType.Comment) return "Kommentar";
+                    return this._XmlNode.Name;
+                }
             }
             public string Value
             {
                 get 
                 {
+                    if (!this._XmlNode.HasChildNodes)
+                        return this._XmlNode.Value;
                     XmlText textnode;
-                    if (!this._XmlElement.HasChildNodes) return string.Empty;
-                    else if ((textnode = this._XmlElement.ChildNodes[0] as XmlText) == null) return string.Empty;
-                    else
-                        return textnode.Value;
+                    if ((textnode = this._XmlNode.ChildNodes[0] as XmlText) != null) return textnode.Value;
+                    return string.Empty;
+                    //XmlText textnode;
+                    //if (!this._XmlNode.HasChildNodes) return string.Empty;
+                    //else if ((textnode = this._XmlNode.ChildNodes[0] as XmlText) == null) return string.Empty;
+                    //else
+                    //    return textnode.Value;
                 }
                 set
                 {
+                    if (!this._XmlNode.HasChildNodes) this._XmlNode.InnerXml = value;
                     XmlText textnode;
-                    if (!this._XmlElement.HasChildNodes) { }
-                    else if ((textnode = this._XmlElement.ChildNodes[0] as XmlText) == null) { }
-                    else
-                        textnode.Value = value;
+                    if ((textnode = this._XmlNode.ChildNodes[0] as XmlText) != null) textnode.Value = value;
+                }
+            }
+            public string Zusatz
+            {
+                get
+                {
+                    XmlElement x = this._XmlNode as XmlElement;
+                    return (x != null && x.HasAttributes) ? "A" : "";
                 }
             }
 
-            public MyDataGridItem(XmlElement e, MyDataGridItem _ParentMyDataGridItem, bool _IsExpanded, int _Level)
+            public object NameBrush
             {
-                _XmlElement = e;
+                get
+                {
+                    if (IsExpandable)
+                        return Application.Current.FindResource(new DynamicResourceExtension("SCB_White").ResourceKey);
+                    else
+                        return Application.Current.FindResource(new DynamicResourceExtension("SCB_Blue").ResourceKey);
+                }
+            }
+            public object ZusatzBrush
+            {
+                get
+                {
+                    return Application.Current.FindResource(new DynamicResourceExtension("SCB_Green").ResourceKey);
+                }
+            }
+
+            public string NodeChar { get; set; }
+            public string NodeCharTooltip { get; set; }
+
+            public System.Windows.Media.Brush NodeCharBrush { get; set; }
+
+            public MyDataGridItem(object e, MyDataGridItem _ParentMyDataGridItem, bool _IsExpanded, int _Level)
+            {
+                _XmlNode = e as XmlNode;
+                string vvv = this._XmlNode.NodeType.ToString();
+                if (this._XmlNode.NodeType == XmlNodeType.Comment) { NodeChar = "K"; NodeCharTooltip = "Kommentar"; NodeCharBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gold); }
+                else if (this._XmlNode.NodeType == XmlNodeType.Attribute) { NodeChar = "A"; NodeCharTooltip = "Attribut"; NodeCharBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen); }
+                else if (this._XmlNode.NodeType == XmlNodeType.Element) { NodeChar = "T"; NodeCharTooltip = "Text"; NodeCharBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.White); }
+                else NodeChar = "";
                 ParentMyDataGridItem = _ParentMyDataGridItem;
+                IsExpandable = ((this._XmlNode.HasChildNodes && this._XmlNode.ChildNodes[0].NodeType != XmlNodeType.Text) || (this._XmlNode.Attributes != null && this._XmlNode.Attributes.Count > 0));
                 IsExpanded = _IsExpanded;
                 Level = _Level;
                 ChildMyDataGridItems = new List<MyDataGridItem>();
-                IsEditable = (this._XmlElement.HasChildNodes && (this._XmlElement.ChildNodes[0].GetType() == typeof(XmlText))) ? true : false;
+                IsEditable = (this._XmlNode.NodeType == XmlNodeType.Comment || (this._XmlNode.HasChildNodes && (this._XmlNode.ChildNodes[0].NodeType == XmlNodeType.Text))) ? true : false;
                 if (this.ParentMyDataGridItem == null) return;
                 Width1 = (this.Level < 1) ? 0 : 16;
                 Width2 = (this.Level < 2) ? 0 : 16;
@@ -162,9 +202,12 @@ namespace XMLCommander
             MyDataGridElementList = new List<MyDataGridItem>();
 
             DataGrid1 = new DataGrid();
-            DataGrid1.BorderThickness = new Thickness(0);
-            DataGrid1.Margin = new Thickness(0);
+            DataGrid1.EnableRowVirtualization = true;
+            DataGrid1.BorderThickness = new Thickness(1);
+            DataGrid1.BorderBrush = (System.Windows.Media.Brush)Application.Current.Resources["SCB_Blue"];
+            DataGrid1.Margin = new Thickness(1);
             DataGrid1.AutoGenerateColumns = false;
+            DataGrid1.HeadersVisibility = DataGridHeadersVisibility.None;
             DataGrid1.RowHeaderWidth = 0;
             DataGrid1.CanUserResizeRows = false;
             DataGrid1.RowHeight = 18;
@@ -173,30 +216,30 @@ namespace XMLCommander
             DataGrid1.BeginningEdit += DataGrid1_BeginningEdit;
             DataGrid1.CellEditEnding += DataGrid1_CellEditEnding;
 
-            
-            System.Windows.Media.Brush br = (System.Windows.Media.Brush)Application.Current.Resources["Transparent"];
-            DataGrid1.Background = br;
+
+            //System.Windows.Media.Brush br = (System.Windows.Media.Brush)Application.Current.Resources["Transparent"];
+            DataGrid1.Background = (System.Windows.Media.Brush)Application.Current.Resources["Transparent"];
             DataGrid1.MouseDoubleClick += DataGrid2_MouseDoubleClick;
 
-            DataGrid1.RowBackground = (System.Windows.Media.Brush)Application.Current.Resources["Transparent"];
+            DataGrid1.RowStyle = (Style)Application.Current.Resources["MyRowStyle"];
+            //DataGrid1.RowBackground = (System.Windows.Media.Brush)Application.Current.Resources["Transparent"];
 
             DataGridTemplateColumn col1 = new DataGridTemplateColumn();
-            col1.Header = "Knoten/Schlüssel";
-            col1.HeaderStyle = (Style)Application.Current.Resources["MyHeaderStyle"];
+            //col1.Header = "Knoten/Schlüssel";
+            //col1.HeaderStyle = (Style)Application.Current.Resources["MyHeaderStyle"];
             col1.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
             col1.IsReadOnly = true;
             col1.CanUserSort = false;
             col1.CellStyle = (Style)Application.Current.Resources["KeyCellStyle"];
 
             DataGridTextColumn col2 = new DataGridTextColumn();
-            col2.Header = "Wert";
-            col2.HeaderStyle = (Style)Application.Current.Resources["MyHeaderStyle"];
+            //col2.Header = "Wert";
+            //col2.HeaderStyle = (Style)Application.Current.Resources["MyHeaderStyle"];
             col2.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
             col2.CanUserSort = false;
             col2.CellStyle = (Style)Application.Current.Resources["ValueCellStyle"];
 
-            Binding myBinding = new Binding("Value");
-            col2.Binding = myBinding;
+            col2.Binding = new Binding("Value");
 
             DataGrid1.Columns.Add(col1);
             DataGrid1.Columns.Add(col2);
@@ -333,39 +376,68 @@ namespace XMLCommander
 
         internal static void ExpandOrCollaps(MyDataGridItem DGI)
         {
-            if (DGI == null) return;
-            if (!DGI._XmlElement.HasChildNodes) return;
-            if (DGI._XmlElement.LastChild.GetType() != typeof(XmlElement)) return;
+            if (DGI == null || DGI._XmlNode.NodeType == XmlNodeType.Attribute || DGI._XmlNode.NodeType == XmlNodeType.Comment) return;
+
+            //if (!((DGI._XmlNode.HasChildNodes && DGI._XmlNode.LastChild.NodeType != XmlNodeType.Text) ||
+            //      DGI._XmlNode.Attributes != null)) return;
+
+
+            //if (!DGI._XmlNode.HasChildNodes) return;
+            //if (DGI._XmlNode.LastChild.NodeType == XmlNodeType.Text) return;
 
             int CurrentIndex = MyDataGridElementList.IndexOf(DGI);
+            bool ListChanged = false;
             if (DGI.IsExpanded)
-                CollapseDataGridElement(DGI);
+                ListChanged = CollapseDataGridElement(DGI);
             else
-                ExpandDataGridElement(DGI, ref CurrentIndex);
-            DGI.IsExpanded = !DGI.IsExpanded;
-            DataGrid1.ItemsSource = null;
-            DataGrid1.ItemsSource = MyDataGridElementList;
+                ListChanged = ExpandDataGridElement(DGI, ref CurrentIndex);
+            if (ListChanged)
+            {
+                DGI.IsExpanded = !DGI.IsExpanded;
+                //this.Cursor = Cursors.Wait;
+                DataGrid1.ItemsSource = null;
+                DataGrid1.ItemsSource = MyDataGridElementList;
+            }
         }
 
-        private static void ExpandDataGridElement(MyDataGridItem DGI, ref int Index)
+        private static bool ExpandDataGridElement(MyDataGridItem DGI, ref int Index)
         {
-            if (DGI._XmlElement.ChildNodes == null) return;
+            //if (DGI._XmlNode.ChildNodes == null) return;
             if (DGI.ChildMyDataGridItems.Count != 0)
             {
                 AddChildMyDataGridItems(DGI, ref Index);
+                return true;
             }
             else
             {
-                for (int i = 0; i < DGI._XmlElement.ChildNodes.Count; i++)
+                bool rval = false;
+                for (int i = 0; i < DGI._XmlNode.Attributes.Count; i++)
                 {
-                    if (DGI._XmlElement.ChildNodes[i].HasChildNodes)
+                    MyDataGridItem cn = new MyDataGridItem(DGI._XmlNode.Attributes[i], DGI, false, DGI.Level + 1);
+                    Index++;
+                    MyDataGridElementList.Insert(Index, cn);
+                    DGI.ChildMyDataGridItems.Add(cn);
+                    rval = true;
+                }
+                for (int i = 0; i < DGI._XmlNode.ChildNodes.Count; i++)
+                {
+                    if (DGI._XmlNode.ChildNodes[i].NodeType != XmlNodeType.Text)
                     {
-                        MyDataGridItem cn = new MyDataGridItem(DGI._XmlElement.ChildNodes[i] as XmlElement, DGI, false, DGI.Level + 1);
+                        MyDataGridItem cn = new MyDataGridItem(DGI._XmlNode.ChildNodes[i], DGI, false, DGI.Level + 1);
                         Index++;
                         MyDataGridElementList.Insert(Index, cn);
                         DGI.ChildMyDataGridItems.Add(cn);
+                        rval = true;
                     }
+                    //if (DGI._XmlElement.ChildNodes[i].HasChildNodes)
+                    //{
+                    //    MyDataGridItem cn = new MyDataGridItem(DGI._XmlElement.ChildNodes[i] as XmlElement, DGI, false, DGI.Level + 1);
+                    //    Index++;
+                    //    MyDataGridElementList.Insert(Index, cn);
+                    //    DGI.ChildMyDataGridItems.Add(cn);
+                    //}
                 }
+                return rval;
             }
         }
 
@@ -383,24 +455,30 @@ namespace XMLCommander
             }
         }
 
-        private static void CollapseDataGridElement(MyDataGridItem DGI)
+        private static bool CollapseDataGridElement(MyDataGridItem DGI)
         {
             int index = MyDataGridElementList.IndexOf(DGI);
             bool weiter = true;
+            bool rval = false;
             while (weiter && (index + 1 < MyDataGridElementList.Count))
             {
                 if (MyDataGridElementList[index + 1].Level > DGI.Level)
+                {
                     MyDataGridElementList.RemoveAt(index + 1);
+                    rval = true;
+                }
                 else
                     weiter = false;
             }
+            return rval;
         }
 
         private void DataGrid1_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             // hier gehts zuerst rein
-            if (!MyDataGridElementList[e.Row.GetIndex()]._XmlElement.HasChildNodes) { e.Cancel = true; }
-            else if (MyDataGridElementList[e.Row.GetIndex()]._XmlElement.ChildNodes[0].GetType() != typeof(XmlText)) { e.Cancel = true; }
+            if (!MyDataGridElementList[e.Row.GetIndex()].IsEditable) { e.Cancel = true; }
+            //if (!MyDataGridElementList[e.Row.GetIndex()]._XmlNode.HasChildNodes) { e.Cancel = true; }
+            //else if (MyDataGridElementList[e.Row.GetIndex()]._XmlNode.ChildNodes[0].GetType() != typeof(XmlText)) { e.Cancel = true; }
         }
         private string OldValue;
         private void DataGrid1_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
@@ -418,19 +496,34 @@ namespace XMLCommander
 
         private static XmlNode GetSiblingFromParent(MyDataGridItem DGI, int heigth)
         {
-            if (heigth == 0) return DGI._XmlElement.NextSibling;
+            if (heigth == 0) return DGI._XmlNode.NextSibling;
             return GetSiblingFromParent(DGI.ParentMyDataGridItem, heigth - 1);
+        }
+
+        private void ToolBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            ToolBar toolBar = sender as ToolBar;
+            var overflowGrid = toolBar.Template.FindName("OverflowGrid", toolBar) as FrameworkElement;
+            if (overflowGrid != null)
+            {
+                overflowGrid.Visibility = Visibility.Collapsed;
+            }
+            var mainPanelBorder = toolBar.Template.FindName("MainPanelBorder", toolBar) as FrameworkElement;
+            if (mainPanelBorder != null)
+            {
+                mainPanelBorder.Margin = new Thickness();
+            }
         }
     }
 
-    public partial class StyleEvents
-    {
-        public void NodeButton_Click(object sender, RoutedEventArgs e)
-        {
-            Button b = sender as Button;
-            MainWindow.ExpandOrCollaps(b.DataContext as MainWindow.MyDataGridItem);
-        }
-    }
+    //public partial class StyleEvents
+    //{
+    //    public void NodeButton_Click(object sender, RoutedEventArgs e)
+    //    {
+    //        Button b = sender as Button;
+    //        MainWindow.ExpandOrCollaps(b.DataContext as MainWindow.MyDataGridItem);
+    //    }
+    //}
 
     //public class ArtistNameConverter : IValueConverter
     //{
